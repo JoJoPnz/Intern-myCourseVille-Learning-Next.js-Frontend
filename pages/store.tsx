@@ -28,13 +28,13 @@ const Store = () => {
                 setLoadingState(false);
             })
             .catch(error => {
+                alert(error.message);
                 router.push('/login')
-                console.log(error.message);
             })
           }
 
       }
-    }, [])
+    }, [router])
 
     const editStoreName = (e : any) => {
         const name = e.target.previousSibling.value;
@@ -95,6 +95,7 @@ const Store = () => {
                                 <input type='text'></input>
                                 <button onClick={editStoreName}>Submit</button>
                             </td>
+                            <td><button>delete</button></td>
                         </tr>)
                 })}
         </tbody>

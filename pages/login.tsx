@@ -12,10 +12,9 @@ const Login = () => {
     useEffect(() => {
         if(localStorage.getItem('access token') != null){
           router.push('/');
-          alert('You have already login')
           return;
         }
-      }, [])
+      }, [router])
 
     const submitLogin = async(event : any) => {
         event.preventDefault();
