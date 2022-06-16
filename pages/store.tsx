@@ -1,8 +1,9 @@
 import axios from "axios";
-import Link from "next/link";
 import { useRouter } from "next/router"
 import { useEffect,useState } from "react"
-import Loading from "./loading";
+import { isUserLogin } from "../hooks/useAuth";
+import { storeService } from "../services/container";
+import Loading from "../components/loading";
 
 const Store = () => {
     const [stores, setStores] = useState<any[]>([]);
@@ -10,112 +11,46 @@ const Store = () => {
     const [newStoreName, setNewStoreName] = useState('');
     const router = useRouter();
     useEffect(() => {
-        console.log("USE EFFECT");
-        
-      if(localStorage.getItem('access token') == null){
-        router.push('/login');
-        return;
-      }
-      else{
-          return () => {
-            axios.get('http://127.0.0.1:8000/api/stores',{
-                headers:{
-                    'Authorization': `Bearer ${localStorage.getItem('access token')}`,
-                    'Accept': 'application/json',
-                }
-            })
-            .then(res => {
-                const data = res.data;
-                // console.log(data); 
-                setStores(data.AllStores);
-                setLoadingState(false);
-            })
-            .catch(error => {
-                alert(error.message);
-                router.push('/login')
-            })
-          }
-
-      }
+        if(!isUserLogin()){
+            router.push('/login');
+            return;
+        }
+        getAllStores();
     }, [router])
 
-    const editStoreName = (e : any) => {
+    const getAllStores = async() => {
+        setLoadingState(true);
+        const allStores = await storeService.allStores();
+        setStores(allStores);
+        setLoadingState(false);
+    }
+    
+    const editStoreName = async(e : any) => {
         e.preventDefault();
         const name = e.target.previousSibling.value;
         const id = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML;
-        const i = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML;
-        axios.patch(`http://127.0.0.1:8000/api/stores/${id}`, 
-        {
-            name
-        },
-        {
-            headers:{
-                'Authorization': `Bearer ${localStorage.getItem('access token')}`,
-                'Accept': 'application/json',
-            }
-        })
-        .then(res => {
-            // location.reload();
-            let newStores = [...stores];
-            newStores[i].name = name;
-            setStores(newStores);
-        })
-        .catch(error =>{
-            alert(error);
-        })
-        
-
+        // const i = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML;
+        await storeService.editStoreName(name,id);
+        getAllStores();
     }
 
     const addStore = async (e : any) => {
         e.preventDefault();
         e.target.reset();
-        console.log(newStoreName);
-        
-        await axios.post(`http://127.0.0.1:8000/api/stores`, 
-        {
-            name : newStoreName
-        },
-        {
-            headers:{
-                'Authorization': `Bearer ${localStorage.getItem('access token')}`,
-                'Accept': 'application/json',
-            }
-        })
-        const res = await axios.get('http://127.0.0.1:8000/api/stores',{
-            headers:{
-                'Authorization': `Bearer ${localStorage.getItem('access token')}`,
-                'Accept': 'application/json',
-            }
-        })
-        setStores(res.data.AllStores);
+        await storeService.addStore(newStoreName);
+        getAllStores();
     }
 
     const deleteStore = async (e : any) => {
         const id = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML;
-        await axios.delete(`http://127.0.0.1:8000/api/stores/${id}`, 
-        {
-            headers:{
-                'Authorization': `Bearer ${localStorage.getItem('access token')}`,
-                'Accept': 'application/json',
-            }
-        }
-        )
-        const res = await axios.get('http://127.0.0.1:8000/api/stores',{
-            headers:{
-                'Authorization': `Bearer ${localStorage.getItem('access token')}`,
-                'Accept': 'application/json',
-            }
-        })
-        setStores(res.data.AllStores);
+        storeService.deleteStore(id);
+        getAllStores();
     }
 
 
     if(loadingState){
         return <Loading/>
     }
-    else{
-
         return(
             
             <div>
@@ -157,7 +92,6 @@ const Store = () => {
 
         </div>
     )
-}
     
 }
 

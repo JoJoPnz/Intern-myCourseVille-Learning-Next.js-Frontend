@@ -10,7 +10,6 @@ import { authService } from '../services/container';
 
 function MyApp({ Component, pageProps }: AppProps) {
 
-
   return (
     <>
       <Head>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AuthService } from './authService';
+import AuthService from './authService';
 import useSWR from 'swr'
 
 // const fetcher = (...args) => fetch(...args).then((res) => res.json())

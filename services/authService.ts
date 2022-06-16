@@ -1,7 +1,7 @@
 import { isUserLogin } from './../hooks/useAuth';
 import axios from 'axios';
 
-export class AuthService {
+export default class AuthService {
     public async login(email : String, password : String) {
         const res = await axios.post('http://127.0.0.1:8000/api/login',
         {
