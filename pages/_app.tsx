@@ -1,12 +1,16 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
+
 // add bootstrap css 
 import 'bootstrap/dist/css/bootstrap.css'
+
 import Head from "next/head";
 import Link from 'next/link';
-import LogoutHandler from '../components/logout';
+import { authService } from '../services/container';
 
 function MyApp({ Component, pageProps }: AppProps) {
+
+
   return (
     <>
       <Head>
@@ -37,7 +41,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         </Link>
       </li>
       <li className="nav-item">
-          <a className="nav-link" href='' onClick={LogoutHandler}>Logout</a>
+          <a className="nav-link" onClick={authService.logout}>Logout</a>
       </li>
     </ul>
   </div>

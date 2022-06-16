@@ -1,6 +1,7 @@
-import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { isUserLogin } from "../hooks/useAuth";
+import { userService } from "../services/container";
 import Loading from "./loading";
 
 const User = () => {
@@ -10,30 +11,25 @@ const User = () => {
     const [id, setID] = useState('');
     const [loadingState, setLoadingState] = useState(true);
     useEffect(() => {
-      if(localStorage.getItem('access token') == null){
+        
+      if(!isUserLogin()){
         alert('Please login first');
         router.push('/login');
         return;
       }
-      return () => {
-        axios.get('http://127.0.0.1:8000/api/user',{
-            headers:{
-                'Authorization': `Bearer ${localStorage.getItem('access token')}`,
-                'Accept': 'application/json',
-            }
-        })
-        .then(res => {
-            const data = res.data;
-            setID(data.id);
-            setName(data.name);
-            setEmail(data.email);
-            setLoadingState(false);
-        })
-        .catch(error => {
-            alert(error);
-        })
+
+      const getUserInfo = async () => {
+        const data = await userService.userInfo();
+        setID(data.id);
+        setName(data.name);
+        setEmail(data.email);
+        setLoadingState(false);
       }
-    }, [])
+      
+      getUserInfo();
+      
+
+    }, [router])
 
     if(loadingState) return <Loading/>;
 
