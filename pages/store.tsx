@@ -7,8 +7,11 @@ import Loading from "./loading";
 const Store = () => {
     const [stores, setStores] = useState<any[]>([]);
     const [loadingState, setLoadingState] = useState(true);
+    const [newStoreName, setNewStoreName] = useState('');
     const router = useRouter();
     useEffect(() => {
+        console.log("USE EFFECT");
+        
       if(localStorage.getItem('access token') == null){
         router.push('/login');
         return;
@@ -37,6 +40,7 @@ const Store = () => {
     }, [router])
 
     const editStoreName = (e : any) => {
+        e.preventDefault();
         const name = e.target.previousSibling.value;
         const id = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML;
         const i = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML;
@@ -62,7 +66,50 @@ const Store = () => {
         
 
     }
-  
+
+    const addStore = async (e : any) => {
+        e.preventDefault();
+        e.target.reset();
+        console.log(newStoreName);
+        
+        await axios.post(`http://127.0.0.1:8000/api/stores`, 
+        {
+            name : newStoreName
+        },
+        {
+            headers:{
+                'Authorization': `Bearer ${localStorage.getItem('access token')}`,
+                'Accept': 'application/json',
+            }
+        })
+        const res = await axios.get('http://127.0.0.1:8000/api/stores',{
+            headers:{
+                'Authorization': `Bearer ${localStorage.getItem('access token')}`,
+                'Accept': 'application/json',
+            }
+        })
+        setStores(res.data.AllStores);
+    }
+
+    const deleteStore = async (e : any) => {
+        const id = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML;
+        await axios.delete(`http://127.0.0.1:8000/api/stores/${id}`, 
+        {
+            headers:{
+                'Authorization': `Bearer ${localStorage.getItem('access token')}`,
+                'Accept': 'application/json',
+            }
+        }
+        )
+        const res = await axios.get('http://127.0.0.1:8000/api/stores',{
+            headers:{
+                'Authorization': `Bearer ${localStorage.getItem('access token')}`,
+                'Accept': 'application/json',
+            }
+        })
+        setStores(res.data.AllStores);
+    }
+
 
     if(loadingState){
         return <Loading/>
@@ -95,12 +142,19 @@ const Store = () => {
                                 <input type='text'></input>
                                 <button onClick={editStoreName}>Submit</button>
                             </td>
-                            <td><button>delete</button></td>
+                            <td><button onClick={deleteStore}>delete</button></td>
                         </tr>)
                 })}
         </tbody>
         </table>
-            
+
+        <form onSubmit={addStore}>
+            <label>Create Store name:</label>
+            <input type="text" onChange={(e)=>setNewStoreName(e.target.value)}/><br/>
+            <input type="submit" value="Submit"/>
+        </form>
+
+
         </div>
     )
 }

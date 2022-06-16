@@ -1,12 +1,14 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Loading from "./loading";
 
 const User = () => {
     const router = useRouter();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [id, setID] = useState('');
+    const [loadingState, setLoadingState] = useState(true);
     useEffect(() => {
       if(localStorage.getItem('access token') == null){
         alert('Please login first');
@@ -25,6 +27,7 @@ const User = () => {
             setID(data.id);
             setName(data.name);
             setEmail(data.email);
+            setLoadingState(false);
         })
         .catch(error => {
             alert(error);
@@ -32,6 +35,7 @@ const User = () => {
       }
     }, [])
 
+    if(loadingState) return <Loading/>;
 
     return (
         <div>
