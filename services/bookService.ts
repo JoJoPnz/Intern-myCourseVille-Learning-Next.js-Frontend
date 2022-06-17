@@ -1,21 +1,19 @@
 import axios from 'axios';
 
-export default class StoreService {
-    public get allStores() {
-        return async () => {
-            const res = await axios.get('http://127.0.0.1:8000/api/stores',{
-                headers:{
-                    'Authorization': `Bearer ${localStorage.getItem('access token')}`,
-                    'Accept': 'application/json',
-                }
-            })
-            const stores = await res.data.AllStores;
-            return stores;
-        }
+export default class BookService {
+    public async allBooks(id: String | undefined | String[]) {
+        const res = await axios.get(`http://127.0.0.1:8000/api/stores/${id}`,{
+            headers:{
+                'Authorization': `Bearer ${localStorage.getItem('access token')}`,
+                'Accept': 'application/json',
+            }
+        })
+        const arrayBooks = await res.data.books;
+        return arrayBooks;
     }
 
-    public async editStoreName(name: String, id: String) {
-        await axios.patch(`http://127.0.0.1:8000/api/stores/${id}`, 
+    public async editBookName(name: String, id: String) {
+        await axios.patch(`http://127.0.0.1:8000/api/books/${id}`, 
         {
             name
         },
@@ -30,10 +28,10 @@ export default class StoreService {
         })
     }
 
-    public async addStore(name: String) {
-        await axios.post(`http://127.0.0.1:8000/api/stores`, 
+    public async addBook(name: String, book_type: String, store_id: String | undefined | String[], price: Number) {
+        await axios.post(`http://127.0.0.1:8000/api/books`, 
         {
-            name
+            name, book_type, store_id, price
         },
         {
             headers:{
@@ -46,8 +44,8 @@ export default class StoreService {
         })
     }
 
-    public async deleteStore(id: String) {
-        await axios.delete(`http://127.0.0.1:8000/api/stores/${id}`, 
+    public async deleteBook(id: String) {
+        await axios.delete(`http://127.0.0.1:8000/api/books/${id}`, 
         {
             headers:{
                 'Authorization': `Bearer ${localStorage.getItem('access token')}`,
@@ -59,6 +57,8 @@ export default class StoreService {
             alert(error.response.data.message);
         })
     }
+
+
 
 
 }

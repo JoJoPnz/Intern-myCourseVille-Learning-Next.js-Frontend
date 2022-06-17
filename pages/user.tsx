@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { isUserLogin } from "../hooks/useAuth";
-import { userService } from "../services/container";
 import Loading from "../components/loading";
+import { useContainer } from "../services/containerProvider";
 
 const User = () => {
     const router = useRouter();
@@ -10,6 +10,8 @@ const User = () => {
     const [email, setEmail] = useState('');
     const [id, setID] = useState('');
     const [loadingState, setLoadingState] = useState(true);
+    const {userService} = useContainer();
+
     useEffect(() => {
       if(!isUserLogin()){
         alert('Please login first');

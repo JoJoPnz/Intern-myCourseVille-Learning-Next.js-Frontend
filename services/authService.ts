@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export default class AuthService {
     public async login(email : String, password : String) {
-        const res = await axios.post('http://127.0.0.1:8000/api/login',
+        await axios.post('http://127.0.0.1:8000/api/login',
         {
             email,
             password
@@ -14,9 +14,14 @@ export default class AuthService {
                 'Accept': 'application/json',
             }
         })
-        const data = await res.data;
-        localStorage.setItem('access token', data);
-        return data;
+        .then(res => {
+            const data = res.data;
+            localStorage.setItem('access token', data);
+        })
+        .catch(error => {
+            alert(error.response.data);
+        }) 
+    
     }
 
     public async logout(){
@@ -33,8 +38,6 @@ export default class AuthService {
             }
         })
         const data = await res.data;
-        console.log(data);
-        
         localStorage.clear();
         alert(data);
         location.reload();

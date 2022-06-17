@@ -1,9 +1,10 @@
 import {useState, useEffect} from 'react';
 import { useRouter } from 'next/router'
 import { isUserLogin } from '../hooks/useAuth';
-import { authService } from '../services/container';
+import { useContainer } from '../services/containerProvider';
 
 const Login = () => {
+    const {authService} = useContainer();
     const router = useRouter()
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

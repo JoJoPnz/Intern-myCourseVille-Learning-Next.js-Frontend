@@ -1,15 +1,18 @@
 import axios from "axios";
 import { useRouter } from "next/router"
-import { useEffect,useState } from "react"
+import { useContext, useEffect,useState } from "react"
 import { isUserLogin } from "../hooks/useAuth";
-import { storeService } from "../services/container";
+// import { storeService } from "../services/container";
 import Loading from "../components/loading";
+import { useContainer } from "../services/containerProvider";
 
 const Store = () => {
     const [stores, setStores] = useState<any[]>([]);
     const [loadingState, setLoadingState] = useState(true);
     const [newStoreName, setNewStoreName] = useState('');
     const router = useRouter();
+    const {storeService} = useContainer();
+
     useEffect(() => {
         if(!isUserLogin()){
             router.push('/login');
@@ -47,6 +50,10 @@ const Store = () => {
         getAllStores();
     }
 
+    const viewBooks = (e : any) => {
+        const id = e.target.parentElement.previousElementSibling.previousElementSibling.innerHTML;
+        router.push(`/store/${id}`)
+    }
 
     if(loadingState){
         return <Loading/>
@@ -72,7 +79,7 @@ const Store = () => {
                             <th scope="row">{i}</th>
                             <td>{store.id}</td>
                             <td>{store.name}</td>
-                            <td><button>view</button></td>
+                            <td><button onClick={viewBooks}>view</button></td>
                             <td>
                                 <input type='text'></input>
                                 <button onClick={editStoreName}>Submit</button>

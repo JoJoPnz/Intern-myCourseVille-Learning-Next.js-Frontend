@@ -6,12 +6,13 @@ import 'bootstrap/dist/css/bootstrap.css'
 
 import Head from "next/head";
 import Link from 'next/link';
-import { authService } from '../services/container';
+import { ContainerProvider, useContainer } from '../services/containerProvider';
+import Logout from '../components/Logout';
 
 function MyApp({ Component, pageProps }: AppProps) {
-
+  
   return (
-    <>
+    <ContainerProvider>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
@@ -39,14 +40,12 @@ function MyApp({ Component, pageProps }: AppProps) {
           <a className="nav-link">Login</a>
         </Link>
       </li>
-      <li className="nav-item">
-          <a className="nav-link" onClick={authService.logout}>Logout</a>
-      </li>
+      <Logout/>
     </ul>
   </div>
 </nav>
       <Component {...pageProps} />
-    </>
+    </ContainerProvider>
   );
 }
 
